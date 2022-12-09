@@ -1,0 +1,12 @@
+certifi==2022.9.24
+cffi==1.15.1
+chardet==3.0.4
+cryptography==3.4.8
+encord==0.1.54
+idna==2.10
+pycparser==2.21
+python-dateutil==2.8.2
+requests==2.25.0
+six==1.16.0
+tqdm==4.64.1
+urllib3==1.26.13
