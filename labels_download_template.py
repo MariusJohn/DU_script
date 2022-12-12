@@ -1,9 +1,10 @@
+import urllib
 import logging 
 import argparse
 import csv
-from typing import List
+from typing import List, NamedTuple
 from pathlib import Path
-
+from collections import namedtuple
 from encord import EncordUserClient
 from encord.project import LabelRowMetadata, EncordClientProject
 
@@ -12,8 +13,31 @@ BENCHMARK_RESULT_FIELDNAMES = [
     'filename',
     'classificationName',
     'classificationAnswerName',
+    'editorLink',
 ]
 # TODO: replace 'PRIVATE_KEY_FILE_HERE' with the name of the private key file
+
+URLComponents = namedtuple(
+    typename='URLComponents',
+    field_names=['scheme', 'netloc', 'path', 'url', 'query', 'fragment']
+)
+
+SCHEME = "https"
+NETLOC = "app.encord.com"
+LABEL_EDITOR_PATH_TEMPLATE = "label_editor/{data_hash}&{project_hash}"
+
+
+def construct_editor_url(project_hash, data_hash):
+    url = urllib.parse.urlunparse(URLComponents(
+        scheme=SCHEME,
+        netloc=NETLOC,
+        path=LABEL_EDITOR_PATH_TEMPLATE.format(project_hash=project_hash, data_hash=data_hash),
+        url="",
+        query="",
+        fragment="",
+    ))
+    return url
+
 
 
 def get_encord_project(project_hash: str):
@@ -73,4 +97,5 @@ if '__main__' == __name__:
                 'filename': label_row['data_title'],
                 'classificationName': list(label_row['classification_answers'].values())[0]['classifications'][0]['name'],
                 'classificationAnswerName': list(label_row['classification_answers'].values())[0]['classifications'][0]['answers'][0]['name'],
+                'editorLink': construct_editor_url(project,label_row.data_hash)
             })
